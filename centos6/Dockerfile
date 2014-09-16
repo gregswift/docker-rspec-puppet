@@ -3,7 +3,7 @@
 # Based on Centos6
 ###########################################################
 FROM centos:centos6
-MAINTAINER Greg Swift
+MAINTAINER Greg Swift "gregswift@gmail.com"
 
 # Update the base system
 RUN yum update -y
