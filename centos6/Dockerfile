@@ -5,17 +5,25 @@
 FROM centos:centos6
 MAINTAINER Greg Swift "gregswift@gmail.com"
 
-# Update the base system
-RUN yum update -y
+# Update the base system and install main packages, then clean up
+RUN printf "update \n install rubygems git ruby-devel libxml2-devel libxslt-devel \n run" | \
+    yum shell --assumeyes && \
+    yum clean all
 
-# Install base packages to enable the workflow
-RUN yum install -y rubygems git
-
-# never install a ruby gem docs
-RUN echo "gem: --no-rdoc --no-ri" >> /etc/gemrc
-
-# Install the relevant gems
-RUN gem install puppet rspec rspec-puppet puppetlabs_spec_helper puppet-lint rspec-puppet-utils rspec-puppet-augeas
+# Configure to ever install a ruby gem docs then
+# Install the relevant gems and cleanup after
+RUN printf "gem: --no-rdoc --no-ri" >> /etc/gemrc && \
+    gem install \
+      puppet \
+      rspec \
+      rspec-puppet \
+      rspec-puppet-augeas \
+      rspec-puppet-facts \
+      rspec-puppet-utils \
+      puppetlabs_spec_helper \
+      puppet-lint \
+      bundler && \
+    rm -rf /.gem
 
 # Setup a directory to load a module for test
 VOLUME /module
